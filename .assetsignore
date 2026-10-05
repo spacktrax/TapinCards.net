@@ -1,0 +1,6 @@
+# Publish only the website, excluding configuration and development files.
+/*
+!/index.html
+!/styles.css
+!/script.js
+!/assets/
