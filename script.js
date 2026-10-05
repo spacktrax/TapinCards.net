@@ -60,26 +60,35 @@ $$('[data-filter]').forEach(button=>button.addEventListener('click',()=>{
  if(document.startViewTransition&&!matchMedia('(prefers-reduced-motion: reduce)').matches)document.startViewTransition(update);else update();
 }));
 const destinations={google:{mark:'G',name:'Google review',label:'GOOGLE REVIEW EXAMPLE'},instagram:{mark:'◎',name:'Instagram profile',label:'INSTAGRAM PROFILE EXAMPLE'},linkedin:{mark:'in',name:'LinkedIn profile',label:'LINKEDIN PROFILE EXAMPLE'},menu:{mark:'≡',name:'digital menu',label:'DIGITAL MENU EXAMPLE'}};
+const socialProfiles={
+ instagram:{name:'Tap In',identity:'@tapin_social',initials:'',url:'https://www.instagram.com/tapin_social?stkn=ZTFjdnFpMHhva3k3',platform:'Instagram',intro:'Meet Tap In.<br>On Instagram.',description:'Preview our profile here to see where an Instagram card can take your customers.',next:'A real tap opens our Instagram profile, where customers can explore and choose to follow.'},
+ linkedin:{name:'Hayden Dewey',identity:'Owner · Tap In',initials:'HD',url:'https://www.linkedin.com/in/hayden-dewey-a72630441?utm_source=share_via&utm_content=profile&utm_medium=member_ios',platform:'LinkedIn',intro:'Meet the person<br>behind Tap In.',description:'Preview Hayden’s profile here to see where a networking card can take your customers.',next:'A real tap opens Hayden’s LinkedIn profile, where customers can learn more and choose to connect.'}
+};
+function profilePreview(profile){
+ const avatar=profile.initials?profile.initials:'<img src="assets/logo.png" alt="" width="38" height="40">';
+ return `<article class="inline-profile ${destination}" aria-label="${profile.platform} profile preview"><div class="profile-cover"><span>${profile.platform}</span><span class="profile-preview-label">PROFILE PREVIEW</span></div><div class="profile-body"><div class="profile-avatar" aria-hidden="true">${avatar}</div><h3 tabindex="-1" id="profile-preview-title">${profile.name}</h3><p class="profile-identity">${profile.identity}</p><p class="profile-next">${profile.next}</p><div class="profile-link-row"><a class="profile-full-link" href="${profile.url}" target="_self">View full profile on ${profile.platform} <span aria-hidden="true">→</span></a><p class="profile-link-note">Opens ${profile.platform} in this tab.</p></div></div></article><p class="inline-preview-note">On-site preview · not a live ${profile.platform} page.</p>`;
+}
 let destination='google',stage=0,rating=0;
 function renderDemo(){
  const d=destinations[destination];const screen=$('#demo-screen');const mark=$('#demo-mark');mark.textContent=d.mark;mark.className=`demo-mark ${destination}`;
- const liveInstagram=destination==='instagram',liveLinkedIn=destination==='linkedin',liveProfile=liveInstagram||liveLinkedIn;
- $('.demo-stage').classList.toggle('connected',stage>0);$('#reset-demo').hidden=liveProfile||stage===0;$('#demo-tap').hidden=liveProfile||stage===2;$('#demo-tap').style.display=liveProfile||stage===2?'none':'';$('#demo-instagram').hidden=!liveInstagram;$('#demo-linkedin').hidden=!liveLinkedIn;
- $('#demo-kind').textContent=liveProfile?'REAL PROFILE EXAMPLE':'ON-SCREEN PREVIEW';
- $('#demo-stage-label').textContent=liveInstagram?'LIVE INSTAGRAM PROFILE':liveLinkedIn?'LIVE LINKEDIN PROFILE':stage===0?'PREVIEW READY':stage===1?'EXAMPLE SCREEN':'PREVIEW COMPLETE';
- if(liveInstagram){screen.innerHTML='<span class="mini-label">@TAPIN_SOCIAL</span><h3>Meet Tap In.<br>On Instagram.</h3><p>Open our real profile as an example of where an Instagram card can take your customers. Opens in a new tab.</p>';}
- else if(liveLinkedIn){screen.innerHTML='<span class="mini-label">HAYDEN DEWEY · OWNER</span><h3>Meet the person<br>behind Tap In.</h3><p>Open Hayden’s real LinkedIn profile as an example of where a networking card can take your customers. Opens in a new tab.</p>';}
+ const profile=socialProfiles[destination],profileOpen=Boolean(profile&&stage>0);
+ $('.demo-stage').classList.toggle('connected',stage>0);$('.demo-stage').classList.toggle('profile-open',profileOpen);mark.hidden=profileOpen;
+ $('#reset-demo').hidden=stage===0;$('#reset-demo').textContent=profileOpen?'Back to preview':'Restart preview';$('#demo-tap').hidden=profileOpen||stage===2;
+ $('#demo-kind').textContent='ON-SCREEN PREVIEW';
+ $('#demo-stage-label').textContent=profileOpen?`${profile.platform.toUpperCase()} PREVIEW`:stage===0?'PREVIEW READY':stage===1?'EXAMPLE SCREEN':'PREVIEW COMPLETE';
+ if(profile){
+  if(profileOpen){screen.innerHTML=profilePreview(profile);}
+  else{screen.innerHTML=`<span class="mini-label">${profile.identity}</span><h3>${profile.intro}</h3><p>${profile.description}</p>`;$('#demo-button-text').textContent='Preview profile';}
+ }
  else if(stage===0){screen.innerHTML=`<span class="mini-label">${d.label}</span><h3>See what your<br>customer sees.</h3><p>Click Start preview to explore an example ${d.name} experience right here.</p>`;$('#demo-button-text').textContent='Start preview';}
  else if(stage===1){
   if(destination==='google'){screen.innerHTML=`<span class="mini-label">${d.label}</span><h3>Your experience.<br>Your own words.</h3><p>Choose a sample rating. It stays in this preview.</p><div class="demo-stars" role="group" aria-label="Choose a sample rating">${[1,2,3,4,5].map(n=>`<button class="demo-star${n<=rating?' selected':''}" data-rating="${n}" aria-label="${n} ${n===1?'star':'stars'}" aria-pressed="${rating===n}">★</button>`).join('')}</div><p class="demo-feedback" id="rating-feedback">${rating?`${rating} ${rating===1?'star':'stars'} selected for this preview.`:'Customers choose their own rating.'}</p>`;$('#demo-button-text').textContent='Finish preview';}
-  else if(destination==='instagram'){screen.innerHTML=`<span class="mini-label">${d.label}</span><h3>The visit ends.<br>The connection stays.</h3><p>With a real card, your customer opens your Instagram profile to explore your posts and choose whether to follow.</p>`;$('#demo-button-text').textContent='Finish preview';}
-  else if(destination==='linkedin'){screen.innerHTML=`<span class="mini-label">${d.label}</span><h3>A handshake.<br>Then a connection.</h3><p>With a real card, your customer opens your LinkedIn profile to learn about your work and choose whether to connect.</p>`;$('#demo-button-text').textContent='Finish preview';}
   else{screen.innerHTML=`<span class="mini-label">${d.label}</span><h3>Something good<br>is on the menu.</h3><p>With a real card, your menu opens on their phone. Here is an example:</p><div class="demo-menu-list"><span>Drinks & coffee</span><span>Something to eat</span><span>Today’s specials</span></div>`;$('#demo-button-text').textContent='Finish preview';}
  }else{const end={google:['That’s the connection.','In real life, customers add their feedback and post it on Google. Nothing was posted in this demo.'],instagram:['Keep the good going.','In real life, customers can follow from Instagram. This demo did not follow an account.'],linkedin:['Make the introduction last.','In real life, your customer chooses how to connect on LinkedIn. This demo did not send a request.'],menu:['Less searching. More enjoying.','A direct link puts your existing menu in reach. This example didn’t place an order.']}[destination];screen.innerHTML=`<span class="mini-label">A SIMPLE NEXT STEP</span><h3>${end[0]}</h3><p>${end[1]}</p>`;}
  screen.classList.remove('demo-screen-arrive');void screen.offsetWidth;screen.classList.add('demo-screen-arrive');
 }
 $$('[data-destination]').forEach(b=>b.addEventListener('click',()=>{destination=b.dataset.destination;stage=0;rating=0;setGroupActive($$('[data-destination]'),b);renderDemo();}));
-$('#demo-tap').addEventListener('click',()=>{if(destination==='google'&&stage===1&&!rating){$('#rating-feedback').textContent='Choose any sample rating to continue the preview.';$('.demo-star').focus();return;}stage=Math.min(stage+1,2);renderDemo();if(stage===2)$('#reset-demo').focus({preventScroll:true});});
+$('#demo-tap').addEventListener('click',()=>{if(destination==='google'&&stage===1&&!rating){$('#rating-feedback').textContent='Choose any sample rating to continue the preview.';$('.demo-star').focus();return;}stage=Math.min(stage+1,2);renderDemo();if(socialProfiles[destination])$('#profile-preview-title').focus({preventScroll:true});else if(stage===2)$('#reset-demo').focus({preventScroll:true});});
 $('#demo-screen').addEventListener('click',e=>{const star=e.target.closest('[data-rating]');if(!star)return;rating=Number(star.dataset.rating);$$('[data-rating]').forEach(b=>{const n=Number(b.dataset.rating);b.classList.toggle('selected',n<=rating);b.setAttribute('aria-pressed',String(n===rating));});$('#rating-feedback').textContent=`${rating} ${rating===1?'star':'stars'} selected for this preview.`;});
 $('#reset-demo').addEventListener('click',()=>{stage=0;rating=0;renderDemo();$('#demo-tap').focus({preventScroll:true});});
 renderDemo();

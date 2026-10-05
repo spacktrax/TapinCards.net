@@ -24,3 +24,27 @@
 .demo-steps h3{font:600 .9375rem/1.5 "DM Sans",sans-serif;margin-bottom:14px;letter-spacing:0}
 #demo-screen p{margin:0 auto}
 @media(max-width:720px){#demo-screen{min-height:380px}.preview-notice{max-width:none}.demo-top{font-size:.6875rem}.demo-actions{width:100%}}
+.demo-mark[hidden]{display:none}
+.profile-open .demo-actions{grid-template-rows:44px;margin-top:18px}
+.profile-open .reset-demo{grid-row:1}
+.profile-open .demo-interface{padding-top:25px;padding-bottom:25px}
+.inline-profile{width:100%;background:#fff;border:1px solid #d6dfec;border-radius:12px;overflow:hidden;text-align:left;box-shadow:0 12px 30px #203c6310}
+.profile-cover{height:104px;padding:18px 20px;display:flex;justify-content:space-between;align-items:flex-start;gap:10px;background:#dceafa;color:#205789;position:relative;isolation:isolate;overflow:hidden;font-weight:600;font-size:.875rem}
+.profile-cover::after{content:'';position:absolute;width:160px;height:160px;border:24px solid #ffffff45;border-radius:50%;right:-20px;top:28px;z-index:-1;box-shadow:0 0 0 22px #ffffff1c}
+.instagram .profile-cover{background:linear-gradient(120deg,#f6e0f2,#fbe6dc);color:#95366a}
+.profile-preview-label{font-size:.625rem;letter-spacing:.065em;padding-top:3px;white-space:nowrap}
+.profile-body{padding:0 22px 20px}
+.profile-avatar{position:relative;width:66px;height:66px;border:4px solid #fff;border-radius:50%;margin-top:-32px;background:#22669b;color:#fff;display:grid;place-items:center;font:600 1.2rem/1 'Manrope',sans-serif;box-shadow:0 2px 6px #19395915}
+.instagram .profile-avatar{background:#f5f7fc}
+.profile-avatar img{width:38px;height:40px;object-fit:contain}
+.demo-interface .inline-profile h3{font-size:1.55rem;line-height:1.25;letter-spacing:-.04em;margin:14px 0 5px}
+#demo-screen .profile-identity{font-size:.875rem;max-width:none;margin:0;color:#44536a}
+#demo-screen .profile-next{font-size:.875rem;line-height:1.7;max-width:none;margin:20px 0}
+.profile-link-row{border-top:1px solid #e5eaf1;padding-top:10px}
+.profile-full-link{display:inline-flex;align-items:center;gap:10px;min-height:44px;font-size:.8125rem;font-weight:600;color:#225ea1;text-decoration:underline;text-underline-offset:4px}
+.instagram .profile-full-link{color:#9b3067}
+.profile-full-link:hover{text-decoration-thickness:2px}
+.profile-full-link:focus-visible,#profile-preview-title:focus-visible{outline:2px solid var(--blue);outline-offset:4px;border-radius:2px}
+#demo-screen .profile-link-note{font-size:.75rem;line-height:1.5;max-width:none;margin:0}
+#demo-screen .inline-preview-note{font-size:.75rem;line-height:1.6;max-width:none;margin:16px 0 0}
+@media(max-width:360px){.profile-body{padding-left:16px;padding-right:16px}.profile-cover{padding-left:16px;padding-right:16px;gap:6px}.profile-preview-label{font-size:.5625rem}.profile-full-link{font-size:.75rem}}
