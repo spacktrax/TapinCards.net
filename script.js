@@ -16,7 +16,7 @@ function productDetails(key, trigger) {
  const p = products[key]; if (!p) return; selectedProduct=key;
  $('#dialog-title').textContent=p.name; $('#dialog-category').textContent=p.category;
  $('#dialog-description').textContent=p.description; $('#dialog-best').textContent=p.best;
- $('#dialog-image').src=`assets/${key}.webp`; $('#dialog-image').alt=p.name;
+ $('#dialog-image').src=`assets/${key}.webp${['review-badge','acrylic-stand'].includes(key)?'?v=clean-credits-1':''}`; $('#dialog-image').alt=p.name;
  $('#dialog-features').replaceChildren(...p.features.map(feature=>{const li=document.createElement('li');li.textContent=feature;return li;}));
  showDialog($('#product-dialog'),trigger);
 }
