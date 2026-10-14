@@ -357,11 +357,43 @@ function profilePreview(profile){
  const avatar=profile.initials?profile.initials:'<img src="assets/logo.png" alt="" width="38" height="40">';
  return `<article class="inline-profile ${destination}" aria-label="${profile.platform} profile preview"><div class="profile-cover"><span>${profile.platform}</span><span class="profile-preview-label">PROFILE PREVIEW</span></div><div class="profile-body"><div class="profile-avatar" aria-hidden="true">${avatar}</div><h3 tabindex="-1" id="profile-preview-title">${profile.name}</h3><p class="profile-identity">${profile.identity}</p><p class="profile-next">${profile.next}</p><div class="profile-link-row"><a class="profile-full-link" href="${profile.url}" target="_self">View full profile on ${profile.platform} <span aria-hidden="true">→</span></a><p class="profile-link-note">Opens ${profile.platform} in this tab.</p></div></div></article><p class="inline-preview-note">On-site preview · not a live ${profile.platform} page.</p>`;
 }
-let destination='google',stage=0,rating=0;
+const cafeMenu={
+ coffee:{label:'Coffee',heading:'SOMETHING TO SIP',items:[
+  ['Honey oat latte','$6','Espresso, oat milk & a touch of honey. Hot or iced.','HOUSE FAVORITE'],
+  ['Slow-steeped cold brew','$5','Rich, smooth coffee, served over ice.'],
+  ['Vanilla matcha','$6.50','Stone-ground matcha, vanilla & your choice of milk.']
+ ]},
+ breakfast:{label:'Breakfast',heading:'A GOOD MORNING',items:[
+  ['Avocado sourdough','$12','Smashed avocado, lemon, chili flakes & extra crunch.','FRESH FROM THE KITCHEN'],
+  ['Sunrise egg sandwich','$10','Soft egg, cheddar & tomato on a toasted brioche bun.'],
+  ['Berry yogurt bowl','$9','Greek yogurt, seasonal berries, granola & honey.']
+ ]},
+ lunch:{label:'Lunch',heading:'STAY A LITTLE LONGER',items:[
+  ['Garden pesto sandwich','$14','Roasted vegetables, basil pesto & mozzarella on sourdough.','THE LUNCH PICK'],
+  ['Harvest grain bowl','$13','Warm grains, roasted squash, greens & lemon dressing.'],
+  ['Soup of the day','$8','A comforting seasonal bowl, with toasted bread.']
+ ]},
+ treats:{label:'Treats',heading:'A LITTLE SOMETHING SWEET',items:[
+  ['Butter croissant','$4.50','Golden layers, baked until crisp & wonderfully flaky.','FRESHLY BAKED'],
+  ['Chocolate brownie','$5','Dark chocolate, a soft center & a pinch of sea salt.'],
+  ['Lemon drizzle cake','$5','A bright slice with lemon glaze & a tender crumb.']
+ ]}
+};
+let destination='google',stage=0,rating=0,menuCategory='coffee';
+function renderCafeMenu(){
+ const category=cafeMenu[menuCategory];
+ return `<div class="menu-preview" aria-label="Sample café menu">
+  <header class="menu-masthead"><img class="menu-decals" src="assets/cafe-decals.webp" width="700" height="350" alt="" loading="lazy"><span class="menu-overline">A LITTLE PAUSE IN YOUR DAY</span><h3>The Corner</h3><span class="menu-subtitle">COFFEE &amp; KITCHEN</span></header>
+  <div class="menu-category-tabs" role="group" aria-label="Sample menu categories">${Object.entries(cafeMenu).map(([key,value])=>`<button type="button" data-menu-category="${key}" class="${key===menuCategory?'active':''}" aria-pressed="${key===menuCategory}" aria-controls="menu-items">${value.label}</button>`).join('')}</div>
+  <div class="menu-section-label"><strong>${category.heading}</strong><span>12 tastes to explore</span></div>
+  <div class="menu-items" id="menu-items" aria-label="${category.label} items">${category.items.map(([name,price,description,badge])=>`<div class="menu-item${badge?' menu-feature':''}">${badge?`<span class="menu-category">${badge}</span>`:''}<div class="menu-item-heading"><span>${name}</span><span>${price}</span></div><p>${description}</p></div>`).join('')}</div>
+  <p class="menu-footnote">SAMPLE MENU · ILLUSTRATIVE ITEMS &amp; PRICES<br> Your card opens your business’s own menu.</p>
+ </div>`;
+}
 function renderDemo(){
  const d=destinations[destination];const screen=$('#demo-screen');const mark=$('#demo-mark');mark.textContent=d.mark;mark.className=`demo-mark ${destination}`;
  const profile=socialProfiles[destination],profileOpen=Boolean(profile&&stage>0);
- $('.demo-stage').classList.toggle('connected',stage>0);$('.demo-stage').classList.toggle('profile-open',profileOpen);mark.hidden=profileOpen;
+ $('.demo-stage').classList.toggle('connected',stage>0);$('.demo-stage').classList.toggle('profile-open',profileOpen);$('.demo-stage').classList.toggle('menu-active',destination==='menu');mark.hidden=profileOpen||(destination==='menu'&&stage===1);
  $('#reset-demo').hidden=stage===0;$('#reset-demo').textContent=profileOpen?'Back to preview':'Restart preview';$('#demo-tap').hidden=profileOpen||stage===2;
  $('#demo-kind').textContent='ON-SCREEN PREVIEW';
  $('#demo-stage-label').textContent=profileOpen?`${profile.platform.toUpperCase()} PREVIEW`:stage===0?'PREVIEW READY':stage===1?'EXAMPLE SCREEN':'PREVIEW COMPLETE';
@@ -372,22 +404,20 @@ function renderDemo(){
  else if(stage===0){screen.innerHTML=`<span class="mini-label">${d.label}</span><h3>See what your<br> customer sees.</h3><p>Click Start preview to explore an example ${d.name} experience right here.</p>`;$('#demo-button-text').textContent='Start preview';}
  else if(stage===1){
   if(destination==='google'){screen.innerHTML=`<span class="mini-label">${d.label}</span><h3>Your experience.<br> Your own words.</h3><p>Choose a sample rating. It stays in this preview.</p><div class="demo-stars" role="group" aria-label="Choose a sample rating">${[1,2,3,4,5].map(n=>`<button class="demo-star${n<=rating?' selected':''}" data-rating="${n}" aria-label="${n} ${n===1?'star':'stars'}" aria-pressed="${rating===n}">★</button>`).join('')}</div><p class="demo-feedback" id="rating-feedback">${rating?`${rating} ${rating===1?'star':'stars'} selected for this preview.`:'Customers choose their own rating.'}</p>`;$('#demo-button-text').textContent='Finish preview';}
-  else{screen.innerHTML=`<div class="menu-preview" aria-label="Sample café menu">
-   <header class="menu-masthead"><span class="menu-overline">A LITTLE PAUSE IN YOUR DAY</span><h3>The Corner</h3><span class="menu-subtitle">COFFEE &amp; KITCHEN</span></header>
-   <span class="menu-category">FROM THE KITCHEN</span>
-   <div class="menu-feature menu-item"><span class="menu-category">THE HOUSE FAVORITE</span><div class="menu-item-heading"><span>Avocado sourdough</span><span>$12</span></div><p>Smashed avocado, lemon, chili flakes &amp; a little extra crunch.</p></div>
-   <span class="menu-category">SOMETHING TO SIP</span>
-   <div class="menu-item"><div class="menu-item-heading"><span>Honey oat latte</span><span>$6</span></div><p>Espresso, oat milk &amp; a touch of honey. Hot or iced.</p></div>
-   <div class="menu-item"><div class="menu-item-heading"><span>Slow-steeped cold brew</span><span>$5</span></div><p>Rich, smooth coffee, served over ice.</p></div>
-   <p class="menu-footnote">SAMPLE MENU · ILLUSTRATIVE ITEMS &amp; PRICES<br> Your card opens your business’s own menu.</p>
-  </div>`;$('#demo-button-text').textContent='Finish preview';}
+  else{screen.innerHTML=renderCafeMenu();$('#demo-button-text').textContent='Finish preview';}
  }else{const end={google:['That’s the connection.','In real life, customers add their feedback and post it on Google. Nothing was posted in this demo.'],instagram:['Keep the good going.','In real life, customers can follow from Instagram. This demo did not follow an account.'],linkedin:['Make the introduction last.','In real life, your customer chooses how to connect on LinkedIn. This demo did not send a request.'],menu:['Less searching. More enjoying.','A direct link puts your existing menu in reach. This example didn’t place an order.']}[destination];screen.innerHTML=`<span class="mini-label">A SIMPLE NEXT STEP</span><h3>${end[0]}</h3><p>${end[1]}</p>`;}
  screen.classList.remove('demo-screen-arrive');void screen.offsetWidth;screen.classList.add('demo-screen-arrive');
 }
-$$('[data-destination]').forEach(b=>b.addEventListener('click',()=>{destination=b.dataset.destination;stage=0;rating=0;setGroupActive($$('[data-destination]'),b);renderDemo();}));
+$$('[data-destination]').forEach(b=>b.addEventListener('click',()=>{destination=b.dataset.destination;stage=0;rating=0;menuCategory='coffee';setGroupActive($$('[data-destination]'),b);renderDemo();}));
 $('#demo-tap').addEventListener('click',()=>{if(destination==='google'&&stage===1&&!rating){$('#rating-feedback').textContent='Choose any sample rating to continue the preview.';$('.demo-star').focus();return;}stage=Math.min(stage+1,2);renderDemo();if(socialProfiles[destination])$('#profile-preview-title').focus({preventScroll:true});else if(stage===2)$('#reset-demo').focus({preventScroll:true});});
-$('#demo-screen').addEventListener('click',e=>{const star=e.target.closest('[data-rating]');if(!star)return;rating=Number(star.dataset.rating);$$('[data-rating]').forEach(b=>{const n=Number(b.dataset.rating);b.classList.toggle('selected',n<=rating);b.setAttribute('aria-pressed',String(n===rating));});$('#rating-feedback').textContent=`${rating} ${rating===1?'star':'stars'} selected for this preview.`;});
-$('#reset-demo').addEventListener('click',()=>{stage=0;rating=0;renderDemo();$('#demo-tap').focus({preventScroll:true});});
+$('#demo-screen').addEventListener('click',e=>{
+ const category=e.target.closest('[data-menu-category]');
+ if(category&&destination==='menu'&&stage===1&&cafeMenu[category.dataset.menuCategory]){
+  menuCategory=category.dataset.menuCategory;renderDemo();$(`[data-menu-category="${menuCategory}"]`).focus({preventScroll:true});return;
+ }
+ const star=e.target.closest('[data-rating]');if(!star)return;rating=Number(star.dataset.rating);$$('[data-rating]').forEach(b=>{const n=Number(b.dataset.rating);b.classList.toggle('selected',n<=rating);b.setAttribute('aria-pressed',String(n===rating));});$('#rating-feedback').textContent=`${rating} ${rating===1?'star':'stars'} selected for this preview.`;
+});
+$('#reset-demo').addEventListener('click',()=>{stage=0;rating=0;menuCategory='coffee';renderDemo();$('#demo-tap').focus({preventScroll:true});});
 renderDemo();
 const useCases={hospitality:['FROM THE FIRST SIP TO THE LAST BITE','A menu at the table.<br> A review at the counter.','Help guests open your menu and invite honest feedback as they finish their visit. Keep your Instagram within reach so they can find you again.','google-tent'],beauty:['GREAT RESULTS. A LASTING CONNECTION.','Let the fresh-cut feeling<br> live beyond the chair.','Invite a review after an appointment and make your Instagram easy to find. Give new clients a window into the care and creativity behind your work.','instagram-card'],services:['A JOB WELL DONE DESERVES TO TRAVEL.','Finish the work.<br> Make the connection.','Bring your review invitation to the doorstep. A clip-on badge helps technicians and service teams offer a simple next step at the end of every job.','review-badge'],retail:['THE COUNTER IS A CONNECTION POINT.','Make the last moment<br> count for the next visit.','Place a review display where customers pause. A tap or scan helps them share their experience while your service is still fresh in mind.','acrylic-stand']};
 $$('[data-use]').forEach(b=>b.addEventListener('click',()=>{setGroupActive($$('[data-use]'),b);const c=useCases[b.dataset.use];$('#use-kicker').textContent=c[0];$('#use-title').innerHTML=c[1];$('#use-copy').textContent=c[2];$('#use-product').dataset.product=c[3];$('#use-product').textContent=`Explore the ${products[c[3]].name}  +`;const detail=$('.use-detail');detail.classList.remove('demo-screen-arrive');void detail.offsetWidth;detail.classList.add('demo-screen-arrive');}));
