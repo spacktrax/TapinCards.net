@@ -372,7 +372,15 @@ function renderDemo(){
  else if(stage===0){screen.innerHTML=`<span class="mini-label">${d.label}</span><h3>See what your<br> customer sees.</h3><p>Click Start preview to explore an example ${d.name} experience right here.</p>`;$('#demo-button-text').textContent='Start preview';}
  else if(stage===1){
   if(destination==='google'){screen.innerHTML=`<span class="mini-label">${d.label}</span><h3>Your experience.<br> Your own words.</h3><p>Choose a sample rating. It stays in this preview.</p><div class="demo-stars" role="group" aria-label="Choose a sample rating">${[1,2,3,4,5].map(n=>`<button class="demo-star${n<=rating?' selected':''}" data-rating="${n}" aria-label="${n} ${n===1?'star':'stars'}" aria-pressed="${rating===n}">★</button>`).join('')}</div><p class="demo-feedback" id="rating-feedback">${rating?`${rating} ${rating===1?'star':'stars'} selected for this preview.`:'Customers choose their own rating.'}</p>`;$('#demo-button-text').textContent='Finish preview';}
-  else{screen.innerHTML=`<span class="mini-label">${d.label}</span><h3>Something good<br> is on the menu.</h3><p>With a real card, your menu opens on their phone. Here is an example:</p><div class="demo-menu-list"><span>Drinks & coffee</span><span>Something to eat</span><span>Today’s specials</span></div>`;$('#demo-button-text').textContent='Finish preview';}
+  else{screen.innerHTML=`<div class="menu-preview" aria-label="Sample café menu">
+   <header class="menu-masthead"><span class="menu-overline">A LITTLE PAUSE IN YOUR DAY</span><h3>The Corner</h3><span class="menu-subtitle">COFFEE &amp; KITCHEN</span></header>
+   <span class="menu-category">FROM THE KITCHEN</span>
+   <div class="menu-feature menu-item"><span class="menu-category">THE HOUSE FAVORITE</span><div class="menu-item-heading"><span>Avocado sourdough</span><span>$12</span></div><p>Smashed avocado, lemon, chili flakes &amp; a little extra crunch.</p></div>
+   <span class="menu-category">SOMETHING TO SIP</span>
+   <div class="menu-item"><div class="menu-item-heading"><span>Honey oat latte</span><span>$6</span></div><p>Espresso, oat milk &amp; a touch of honey. Hot or iced.</p></div>
+   <div class="menu-item"><div class="menu-item-heading"><span>Slow-steeped cold brew</span><span>$5</span></div><p>Rich, smooth coffee, served over ice.</p></div>
+   <p class="menu-footnote">SAMPLE MENU · ILLUSTRATIVE ITEMS &amp; PRICES<br> Your card opens your business’s own menu.</p>
+  </div>`;$('#demo-button-text').textContent='Finish preview';}
  }else{const end={google:['That’s the connection.','In real life, customers add their feedback and post it on Google. Nothing was posted in this demo.'],instagram:['Keep the good going.','In real life, customers can follow from Instagram. This demo did not follow an account.'],linkedin:['Make the introduction last.','In real life, your customer chooses how to connect on LinkedIn. This demo did not send a request.'],menu:['Less searching. More enjoying.','A direct link puts your existing menu in reach. This example didn’t place an order.']}[destination];screen.innerHTML=`<span class="mini-label">A SIMPLE NEXT STEP</span><h3>${end[0]}</h3><p>${end[1]}</p>`;}
  screen.classList.remove('demo-screen-arrive');void screen.offsetWidth;screen.classList.add('demo-screen-arrive');
 }
